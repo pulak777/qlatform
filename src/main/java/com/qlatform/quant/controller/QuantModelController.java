@@ -32,42 +32,42 @@ public class QuantModelController {
     }
 
     @GetMapping("/all")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public List<QuantModel> getAllQuantModels() {
         return quantModelService.getAllModels();
     }
 
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     @GetMapping("/name/{name}")
     public List<QuantModel> getQuantModelByName(@PathVariable String name) {
         return quantModelService.getModelsByName(name);
     }
 
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     @GetMapping("/id/{id}")
     public Optional<QuantModel> getQuantModelById(@PathVariable String id) {
         return quantModelService.getModelById(id);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/save")
     public QuantModel saveQuantModel(@Valid @RequestBody QuantModel input) {
         return quantModelService.saveModel(input);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/save/batch")
     public List<QuantModel> batchSaveQuantModel(@Valid @RequestBody List<QuantModel> input) {
         return quantModelService.saveAllModels(input);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/update/{id}")
     public QuantModel updateQuantModel(@PathVariable String id, @Valid @RequestBody QuantModel input) {
         return quantModelService.updateModel(id, input);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/delete")
     public void deleteQuantModel(@RequestBody String id) {
         quantModelService.deleteModel(id);

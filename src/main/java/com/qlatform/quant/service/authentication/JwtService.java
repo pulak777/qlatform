@@ -2,6 +2,7 @@ package com.qlatform.quant.service.authentication;
 
 import com.qlatform.quant.exception.jwt.*;
 import com.qlatform.quant.exception.jwt.JwtException;
+import com.qlatform.quant.model.Role;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Service;
 import java.security.Key;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class JwtService {
     private static final String ISSUER = "qlatform.com";
     private static final String TOKEN_TYPE = "JWT";
-    private static final String ROLES_CLAIM = "roles";
+    private static final String ROLE_CLAIM = "role";
     private static final long CLOCK_SKEW_SECONDS = 60;
 
     @Value("${jwt.secret}")
@@ -66,9 +66,6 @@ public class JwtService {
             long expiration
     ) {
         validateUserDetails(userDetails);
-        extraClaims.put("role", userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList()));
         try {
             return Jwts.builder()
                     .setClaims(extraClaims)
@@ -76,7 +73,7 @@ public class JwtService {
                     .setIssuedAt(new Date())
                     .setIssuer(ISSUER)
                     .setId(UUID.randomUUID().toString())
-                    .claim(ROLES_CLAIM, extractRoles(userDetails))
+                    .claim(ROLE_CLAIM, extractRole(userDetails))
                     .setExpiration(new Date(System.currentTimeMillis() + expiration))
                     .setHeaderParam("typ", TOKEN_TYPE)
                     .signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -109,10 +106,10 @@ public class JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public List<String> extractRoles(String token) {
+    public String extractRole(String token) {
         validateToken(token);
         return extractClaim(token, claims ->
-                claims.get(ROLES_CLAIM, List.class));
+                claims.get(ROLE_CLAIM, String.class));
     }
 
     public Date extractExpiration(String token) {
@@ -160,11 +157,12 @@ public class JwtService {
         return extractExpiration(token).before(new Date());
     }
 
-    private List<String> extractRoles(UserDetails userDetails) {
+    private String extractRole(UserDetails userDetails) {
         return userDetails.getAuthorities()
                 .stream()
+                .findFirst()
                 .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+                .orElse(Role.USER.name());
     }
 
     private void validateUserDetails(UserDetails userDetails) {
