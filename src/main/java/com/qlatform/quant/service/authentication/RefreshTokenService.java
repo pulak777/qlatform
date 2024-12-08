@@ -1,12 +1,10 @@
 package com.qlatform.quant.service.authentication;
 
-import com.qlatform.quant.model.RefreshToken;
+import com.qlatform.quant.model.authentication.RefreshToken;
 import com.qlatform.quant.model.User;
 import com.qlatform.quant.repository.userdb.RefreshTokenRepository;
 import com.qlatform.quant.repository.userdb.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

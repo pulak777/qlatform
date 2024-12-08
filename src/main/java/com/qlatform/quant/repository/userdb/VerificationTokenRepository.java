@@ -1,7 +1,7 @@
 package com.qlatform.quant.repository.userdb;
 
 import com.qlatform.quant.model.User;
-import com.qlatform.quant.model.VerificationToken;
+import com.qlatform.quant.model.authentication.VerificationToken;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

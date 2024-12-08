@@ -2,13 +2,11 @@ package com.qlatform.quant.controller;
 
 import com.qlatform.quant.model.adapter.CustomUserDetails;
 import com.qlatform.quant.model.credential.CredentialSummary;
-import com.qlatform.quant.model.dto.CredentialRequest;
-import com.qlatform.quant.service.user.UserService;
+import com.qlatform.quant.model.dto.auth.CredentialRequest;
 import com.qlatform.quant.service.user.credential.CloudCredentialService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;

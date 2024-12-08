@@ -1,4 +1,4 @@
-package com.qlatform.quant.model;
+package com.qlatform.quant.model.dto.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

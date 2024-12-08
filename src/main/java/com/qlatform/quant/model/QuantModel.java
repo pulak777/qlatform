@@ -1,5 +1,6 @@
 package com.qlatform.quant.model;
 
+import com.qlatform.quant.model.dto.PythonDependency;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

@@ -1,4 +1,4 @@
-package com.qlatform.quant.model.dto;
+package com.qlatform.quant.model.dto.auth;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;

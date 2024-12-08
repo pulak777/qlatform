@@ -1,5 +1,6 @@
-package com.qlatform.quant.model;
+package com.qlatform.quant.model.authentication;
 
+import com.qlatform.quant.model.User;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;

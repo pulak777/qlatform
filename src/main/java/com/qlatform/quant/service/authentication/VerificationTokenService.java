@@ -1,7 +1,7 @@
 package com.qlatform.quant.service.authentication;
 
 import com.qlatform.quant.model.User;
-import com.qlatform.quant.model.VerificationToken;
+import com.qlatform.quant.model.authentication.VerificationToken;
 import com.qlatform.quant.repository.userdb.VerificationTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

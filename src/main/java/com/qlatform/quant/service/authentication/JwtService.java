@@ -2,7 +2,7 @@ package com.qlatform.quant.service.authentication;
 
 import com.qlatform.quant.exception.jwt.*;
 import com.qlatform.quant.exception.jwt.JwtException;
-import com.qlatform.quant.model.Role;
+import com.qlatform.quant.model.authentication.Role;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;

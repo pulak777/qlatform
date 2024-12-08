@@ -3,8 +3,10 @@ package com.qlatform.quant.service.authentication;
 import com.qlatform.quant.exception.authentication.*;
 import com.qlatform.quant.model.*;
 import com.qlatform.quant.model.adapter.CustomUserDetails;
-import com.qlatform.quant.model.dto.LoginRequest;
-import com.qlatform.quant.model.dto.SignupRequest;
+import com.qlatform.quant.model.authentication.*;
+import com.qlatform.quant.model.dto.auth.AuthResponse;
+import com.qlatform.quant.model.dto.auth.LoginRequest;
+import com.qlatform.quant.model.dto.auth.SignupRequest;
 import com.qlatform.quant.repository.userdb.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
     private final VerificationTokenService verificationTokenService;
+    private final PasswordResetTokenService passwordResetTokenService;
     private final EmailService emailService;
 
     public AuthResponse signup(@Valid SignupRequest request) {
@@ -170,5 +173,30 @@ public class AuthService {
         emailService.sendVerificationEmail(user.getEmail(), "Email Verification", newToken);
 
         log.info("Verification email resent to: {}", email);
+    }
+
+    public void forgotPassword(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        String resetToken = UUID.randomUUID().toString();
+        // Save resetToken with an expiry time
+        PasswordResetToken passwordResetToken = passwordResetTokenService.createPasswordResetToken(user, resetToken);
+
+        emailService.sendPasswordResetEmail(email, passwordResetToken.getExpiresAt(), resetToken);
+        log.info("Password reset email sent to: {}", email);
+    }
+
+    public void resetPassword(String token, String newPassword) {
+        PasswordResetToken resetToken = passwordResetTokenService.validatePasswordResetToken(token);
+
+        User user = resetToken.getUser();
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        resetToken.setUsed(true);
+        passwordResetTokenService.save(resetToken);
+
+        log.info("Password reset successful for email: {}", user.getEmail());
     }
 }

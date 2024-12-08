@@ -1,6 +1,6 @@
 package com.qlatform.quant.repository.userdb;
 
-import com.qlatform.quant.model.AuthProvider;
+import com.qlatform.quant.model.authentication.AuthProvider;
 import com.qlatform.quant.model.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;

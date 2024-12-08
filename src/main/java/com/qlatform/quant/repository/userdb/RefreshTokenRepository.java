@@ -1,6 +1,6 @@
 package com.qlatform.quant.repository.userdb;
 
-import com.qlatform.quant.model.RefreshToken;
+import com.qlatform.quant.model.authentication.RefreshToken;
 import com.qlatform.quant.model.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;

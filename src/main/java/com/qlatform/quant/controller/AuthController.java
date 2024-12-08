@@ -1,10 +1,10 @@
 package com.qlatform.quant.controller;
 
-import com.qlatform.quant.model.AuthResponse;
-import com.qlatform.quant.model.dto.LoginRequest;
+import com.qlatform.quant.model.dto.auth.AuthResponse;
+import com.qlatform.quant.model.dto.auth.LoginRequest;
 import com.qlatform.quant.model.dto.MessageResponse;
-import com.qlatform.quant.model.dto.RefreshTokenRequest;
-import com.qlatform.quant.model.dto.SignupRequest;
+import com.qlatform.quant.model.dto.auth.RefreshTokenRequest;
+import com.qlatform.quant.model.dto.auth.SignupRequest;
 import com.qlatform.quant.service.authentication.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -59,14 +59,13 @@ public class AuthController {
         return ResponseEntity.ok("Verification email resent successfully");
     }
 
-//    TODO:
-//    @PostMapping("/forgot-password")
-//    public void forgotPassword(@RequestParam String email) {
-//        authService.forgotPassword(email);
-//    }
-//
-//    @PostMapping("/reset-password")
-//    public void resetPassword(@RequestParam String token, @RequestParam String newPassword) {
-//        authService.resetPassword(token, newPassword);
-//    }
+    @PostMapping("/forgot-password")
+    public void forgotPassword(@RequestParam String email) {
+        authService.forgotPassword(email);
+    }
+
+    @PostMapping("/reset-password")
+    public void resetPassword(@RequestParam String token, @RequestParam String newPassword) {
+        authService.resetPassword(token, newPassword);
+    }
 }
