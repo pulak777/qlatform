@@ -14,5 +14,6 @@ public class EncryptedCredentialEntry {
     private String iv;
     private String nickname;
     private String provider;  // AWS, GCP, Azure, etc.
+    private String region;
     private LocalDateTime lastUpdatedAt;
 }

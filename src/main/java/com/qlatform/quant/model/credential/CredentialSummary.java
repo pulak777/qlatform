@@ -10,5 +10,6 @@ import java.time.LocalDateTime;
 public class CredentialSummary {
     private String nickname;
     private String provider;
+    private String region;
     private LocalDateTime lastUpdatedAt;
 }

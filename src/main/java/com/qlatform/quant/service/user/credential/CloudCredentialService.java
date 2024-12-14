@@ -3,6 +3,7 @@ package com.qlatform.quant.service.user.credential;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qlatform.quant.exception.credential.CredentialException;
+import com.qlatform.quant.model.User;
 import com.qlatform.quant.model.credential.CloudCredential;
 import com.qlatform.quant.model.credential.CredentialSummary;
 import com.qlatform.quant.model.credential.EncryptedCredentialEntry;
@@ -37,21 +38,22 @@ public class CloudCredentialService {
         this.objectMapper = objectMapper;
     }
 
-    public void storeCredential(String clientId, String nickname,
-                                Map<String, String> credentials,
+    public void storeCredential(User user, String nickname,
+                                Map<String, String> credentials, String region,
                                 String provider) {
         try {
             String credentialsJson = objectMapper.writeValueAsString(credentials);
             EncryptedData encryptedData = encryptionService.encrypt(credentialsJson);
 
-            CloudCredential cloudCredential = repository.findByClientId(clientId)
+            CloudCredential cloudCredential = repository.findByUser(user)
                     .orElse(new CloudCredential());
-            cloudCredential.setClientId(clientId);
+            cloudCredential.setUser(user);
 
             EncryptedCredentialEntry entry = new EncryptedCredentialEntry(
                     encryptedData.getEncryptedContent(),
                     encryptedData.getIv(),
                     nickname,
+                    region,
                     provider,
                     LocalDateTime.now()
             );
@@ -59,22 +61,22 @@ public class CloudCredentialService {
             cloudCredential.getCredentials().put(nickname, entry);
             repository.save(cloudCredential);
 
-            log.info("Stored credentials '{}' for client: {}", nickname, clientId);
+            log.info("Stored credentials '{}' for client: {}", nickname, user.getId());
         } catch (Exception e) {
-            log.error("Error storing credentials '{}' for client: {}", nickname, clientId, e);
+            log.error("Error storing credentials '{}' for client: {}", nickname, user.getId(), e);
             throw new CredentialException.CredentialStorageException("Failed to store credentials", e);
         }
     }
 
-    public Map<String, String> retrieveCredential(String clientId, String nickname) {
+    public Map<String, String> retrieveCredential(User user, String nickname) {
         try {
-            CloudCredential cloudCredential = repository.findByClientId(clientId)
-                    .orElseThrow(() -> new CredentialNotFoundException("Credentials not found for client: " + clientId));
+            CloudCredential cloudCredential = repository.findByUser(user)
+                    .orElseThrow(() -> new CredentialNotFoundException("Credentials not found for client: " + user.getId()));
 
             EncryptedCredentialEntry entry = cloudCredential.getCredentials().get(nickname);
             if (entry == null) {
                 throw new CredentialNotFoundException(
-                        String.format("Credential '%s' not found for client: %s", nickname, clientId)
+                        String.format("Credential '%s' not found for client: %s", nickname, user.getId())
                 );
             }
 
@@ -88,39 +90,73 @@ public class CloudCredentialService {
                     new TypeReference<Map<String, String>>() {}
             );
         } catch (Exception e) {
-            log.error("Error retrieving credentials '{}' for client: {}", nickname, clientId, e);
+            log.error("Error retrieving credentials '{}' for client: {}", nickname, user.getId(), e);
             throw new CredentialException.CredentialRetrievalException("Failed to retrieve credentials", e);
         }
     }
 
-    public List<CredentialSummary> listClientCredentials(String clientId) throws CredentialNotFoundException {
-        CloudCredential credential = repository.findByClientId(clientId)
-                .orElseThrow(() -> new CredentialNotFoundException("Credentials not found for client: " + clientId));
+    public String retrieveRegion(User user, String nickname) throws CredentialNotFoundException {
+        CloudCredential cloudCredential = repository.findByUser(user)
+                .orElseThrow(() -> new CredentialNotFoundException("Credentials not found for client: " + user.getId()));
+
+        EncryptedCredentialEntry entry = cloudCredential.getCredentials().get(nickname);
+        if (entry == null) {
+            throw new CredentialNotFoundException(
+                    String.format("Credential '%s' not found for client: %s", nickname, user.getId())
+            );
+        }
+
+        return entry.getRegion();
+    }
+
+    public List<CredentialSummary> listClientCredentials(User user) throws CredentialNotFoundException {
+        CloudCredential credential = repository.findByUser(user)
+                .orElseThrow(() -> new CredentialNotFoundException("Credentials not found for client: " + user.getId()));
 
         return credential.getCredentials().values().stream()
                 .map(entry -> new CredentialSummary(
                         entry.getNickname(),
                         entry.getProvider(),
+                        entry.getRegion(),
                         entry.getLastUpdatedAt()
                 ))
                 .collect(Collectors.toList());
     }
 
-    public void deleteCredential(String clientId, String nickname) {
+    public CredentialSummary getClientCredential(User user, String nickname) throws CredentialNotFoundException {
+        CloudCredential credential = repository.findByUser(user)
+                .orElseThrow(() -> new CredentialNotFoundException("Credentials not found for client: " + user.getId()));
+
+        EncryptedCredentialEntry entry = credential.getCredentials().get(nickname);
+        if (entry == null) {
+            throw new CredentialNotFoundException(
+                    String.format("Credential '%s' not found for client: %s", nickname, user.getId())
+            );
+        }
+
+        return new CredentialSummary(
+                entry.getNickname(),
+                entry.getProvider(),
+                entry.getRegion(),
+                entry.getLastUpdatedAt()
+        );
+    }
+
+    public void deleteCredential(User user, String nickname) {
         try {
-            CloudCredential credential = repository.findByClientId(clientId)
-                    .orElseThrow(() -> new CredentialNotFoundException("Credentials not found for client: " + clientId));
+            CloudCredential credential = repository.findByUser(user)
+                    .orElseThrow(() -> new CredentialNotFoundException("Credentials not found for client: " + user.getId()));
 
             if (credential.getCredentials().remove(nickname) == null) {
                 throw new CredentialNotFoundException(
-                        String.format("Credential '%s' not found for client: %s", nickname, clientId)
+                        String.format("Credential '%s' not found for client: %s", nickname, user.getId())
                 );
             }
 
             repository.save(credential);
-            log.info("Deleted credential '{}' for client: {}", nickname, clientId);
+            log.info("Deleted credential '{}' for client: {}", nickname, user.getId());
         } catch (Exception e) {
-            log.error("Error deleting credential '{}' for client: {}", nickname, clientId, e);
+            log.error("Error deleting credential '{}' for client: {}", nickname, user.getId(), e);
             throw new CredentialException.CredentialDeletionException("Failed to delete credential", e);
         }
     }

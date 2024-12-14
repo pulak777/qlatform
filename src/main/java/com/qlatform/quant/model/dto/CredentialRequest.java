@@ -1,4 +1,4 @@
-package com.qlatform.quant.model.dto.auth;
+package com.qlatform.quant.model.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -16,6 +16,9 @@ import java.util.Map;
 public class CredentialRequest {
     @NotBlank(message = "Provider is required")
     private String provider;
+
+    @NotBlank(message = "Region is required")
+    private String region;
 
     @NotEmpty(message = "Credentials map cannot be empty")
     private Map<String, String> credentials;

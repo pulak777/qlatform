@@ -6,7 +6,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @Builder
@@ -17,9 +16,7 @@ import java.util.UUID;
 @Document("quant_model")
 public class QuantModel {
     @Id
-    @Builder.Default
-    @NonNull
-    private String id = "QM_" + UUID.randomUUID().toString().replace("-", "");
+    private String id;
 
     @NonNull
     private String name;

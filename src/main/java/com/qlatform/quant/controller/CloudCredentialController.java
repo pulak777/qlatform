@@ -2,7 +2,7 @@ package com.qlatform.quant.controller;
 
 import com.qlatform.quant.model.adapter.CustomUserDetails;
 import com.qlatform.quant.model.credential.CredentialSummary;
-import com.qlatform.quant.model.dto.auth.CredentialRequest;
+import com.qlatform.quant.model.dto.CredentialRequest;
 import com.qlatform.quant.service.user.credential.CloudCredentialService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,10 +30,11 @@ public class CloudCredentialController {
         log.debug("Storing credential for user: {}, nickname: {}", userDetails.user().getId(), nickname);
 
         cloudCredentialService.storeCredential(
-                userDetails.user().getId(),
+                userDetails.user(),
                 nickname,
                 request.getCredentials(),
-                request.getProvider()
+                request.getProvider(),
+                request.getRegion()
         );
 
         return ResponseEntity.ok().build();
@@ -46,7 +47,7 @@ public class CloudCredentialController {
         log.debug("Retrieving credential for user: {}, nickname: {}", userDetails.user().getId(), nickname);
 
         Map<String, String> credentials = cloudCredentialService.retrieveCredential(
-                userDetails.user().getId(),
+                userDetails.user(),
                 nickname
         );
 
@@ -59,7 +60,7 @@ public class CloudCredentialController {
         log.debug("Listing credentials for user: {}", userDetails.user().getId());
         try {
             List<CredentialSummary> credentials = cloudCredentialService.listClientCredentials(
-                    userDetails.user().getId()
+                    userDetails.user()
             );
 
             return ResponseEntity.ok(credentials);
@@ -75,7 +76,7 @@ public class CloudCredentialController {
         log.debug("Deleting credential for user: {}, nickname: {}", userDetails.user().getId(), nickname);
 
         cloudCredentialService.deleteCredential(
-                userDetails.user().getId(),
+                userDetails.user(),
                 nickname
         );
 
