@@ -44,8 +44,6 @@ public class User {
 
     @Builder.Default
     private boolean enabled = true;
-    @Builder.Default
-    private boolean blocked = false;
 
     @CreatedDate
     private LocalDateTime createdAt;

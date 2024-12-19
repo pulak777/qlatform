@@ -33,10 +33,6 @@ public class UserService {
         userRepository.updateEnabledStatus(userId, enabled);
     }
 
-    public void toggleUserBlocked(String userId, boolean blocked) {
-        userRepository.updateBlockedStatus(userId, blocked);
-    }
-
     public List<User> findUnverifiedUsers() {
         return userRepository.findByEmailVerifiedFalse();
     }

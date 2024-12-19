@@ -50,9 +50,7 @@ public class ComputeInstanceService {
      * Fetch all ComputeInstances for a given user.
      */
     public List<ComputeInstance> getComputeInstancesByUser(User user) {
-        return computeInstanceRepository.findByUser(user)
-                .stream()
-                .toList();
+        return computeInstanceRepository.findByUser(user).orElse(List.of());
     }
 
     /**

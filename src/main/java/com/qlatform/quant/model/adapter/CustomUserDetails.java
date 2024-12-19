@@ -32,7 +32,7 @@ public record CustomUserDetails(User user) implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return !user.isBlocked(); // Use the `blocked` field
+        return user.isEnabled(); // Use the `enabled` field
     }
 
     @Override
